@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  */
 
-import { loadConfig } from "browserslist"
+import browserslist from "browserslist"
 import { Plugin } from "rollup"
 
 import builder from "core-js-builder"
@@ -34,7 +34,7 @@ export function corejsPlugin(
 		format: "esm",
 		modules: options.modules,
 		exclude: options.exclude,
-		targets: options.targets || loadConfig({}),
+		targets: options.targets || browserslist.loadConfig({}),
 		summary: {
 			comment: options.summary,
 		},
