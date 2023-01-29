@@ -1,0 +1,51 @@
+{
+  "name": "rollup-plugin-corejs",
+  "version": "0.1.0",
+  "description": "⚡ include core-js polyfills when bundling with rollup",
+  "keywords": [
+    "corejs",
+    "core-js",
+    "polyfill",
+    "polyfills",
+    "rollup",
+    "rollupplugin",
+    "rollup-plugin",
+    "browserslist"
+  ],
+  "license": "EUPL-1.2",
+  "repository": "susnux/rollup-plugin-corejs",
+  "files": [
+    "dist",
+    "LICENSES",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c rollup.config.mjs",
+    "check-types": "tsc --noEmit",
+    "format": "prettier --write src '*.{js,mjs,cjs}'",
+    "lint": "prettier --check src '*.{js,mjs,cjs}'"
+  },
+  "dependencies": {
+    "browserslist": "^4.21.4",
+    "core-js-builder": "^3.27.2",
+    "magic-string": "^0.27.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.0.0",
+    "prettier": "^2.8.3",
+    "rollup": "^3.12.0",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.4"
+  },
+  "prettier": {
+    "useTabs": true,
+    "tabWidth": 4,
+    "semi": false
+  }
+}
