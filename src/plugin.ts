@@ -43,6 +43,10 @@ export function corejsPlugin(
 	return {
 		name: "core-js",
 		async transform(code, id) {
+			/*
+			 * We do this in `transform` so the imports get grouped
+			 * into split chunk for multiple entries
+			 */
 			if (this.getModuleInfo(id)?.isEntry) {
 				const magicString = new MagicString(code)
 				const bundle = await builder(config)
