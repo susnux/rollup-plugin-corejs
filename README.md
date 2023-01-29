@@ -48,7 +48,7 @@ import { corejsPlugin } from 'rollup-plugin-corejs'
 export default {
   //...
   plugins: [
-    new CoreJSPlugin({
+    corejsPlugin({
         // Options
     }),
     // ...
