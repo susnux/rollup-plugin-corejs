@@ -31,6 +31,9 @@
     "format": "prettier --write src '*.{js,mjs,cjs}'",
     "lint": "prettier --check src '*.{js,mjs,cjs}'"
   },
+  "engines": {
+		"node": "^16.0.0 || ^18.0.0"
+	},
   "dependencies": {
     "browserslist": "^4.21.4",
     "core-js-builder": "^3.27.2",
