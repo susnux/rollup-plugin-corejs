@@ -44,9 +44,9 @@
     "rollup": "^3.0"
   },
   "dependencies": {
-    "browserslist": "^4.21.4",
+    "browserslist": "^4.21.5",
     "core-js-builder": "^3.29.0",
-    "magic-string": "^0.27.0"
+    "magic-string": "^0.30.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.0.0",
