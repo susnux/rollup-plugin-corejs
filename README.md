@@ -2,7 +2,7 @@
 SPDX-FileCopyrightText: 2023 Ferdinand Thiessen <rpm@fthiessen.de>
 SPDX-License-Identifier: EUPL-1.2
 --->
-[![GitHub package.json version (main branch)](https://img.shields.io/github/package-json/v/susnux/rollup-plugin-corejs)](https://github.com/susnux/rollup-plugin-corejs/releases)
+[![NPM package version](https://img.shields.io/npm/v/rollup-plugin-corejs)](https://www.npmjs.com/package/rollup-plugin-corejs)
 [![GitHub Workflow Status (main branch)](https://img.shields.io/github/actions/workflow/status/susnux/rollup-plugin-corejs/node.yml?branch=main)](https://github.com/susnux/rollup-plugin-corejs/actions/workflows/node.yml)
 [![license](https://img.shields.io/npm/l/rollup-plugin-corejs?color=blue)](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12)
 
@@ -28,7 +28,7 @@ npm i -D rollup-plugin-corejs
 ```
 
 ### 🔧 Configuration
-In your `rollup.config.js`:
+If you are using CommonJS, then use this in your `rollup.config.js`:
 ```js
 const { corejsPlugin } = require('rollup-plugin-corejs')
 
@@ -41,7 +41,7 @@ module.exports = {
 }
 ```
 
-Or in your `rollup.config.mjs`:
+Or if you are using module JS (e.g. `rollup.config.mjs`):
 ```js
 import { corejsPlugin } from 'rollup-plugin-corejs'
 
