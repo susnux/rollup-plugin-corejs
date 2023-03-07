@@ -20,13 +20,18 @@
     "README.md",
     "CHANGELOG.md"
   ],
-  "exports": {
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.js"
-  },
+  "type": "module",
+  "main": "dist/index.cjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
-    "build": "rollup -c rollup.config.mjs",
+    "build": "rm -v dist/* && rollup -c rollup.config.js",
     "check-types": "tsc --noEmit",
     "format": "prettier --write src '*.{js,mjs,cjs}'",
     "lint": "prettier --check src '*.{js,mjs,cjs}'",

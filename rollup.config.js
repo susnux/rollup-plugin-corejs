@@ -18,17 +18,17 @@ const external = [
 const config = (input, output) => ({
 	input,
 	external,
-	plugins: [typescript()],
+	plugins: [typescript({ declaration: output.format === "esm" })],
 	output: [output],
 })
 
 export default [
 	config("./src/index.ts", {
-		file: "dist/index.mjs",
+		file: "dist/index.es.mjs",
 		format: "esm",
 	}),
 	config("./src/index.ts", {
-		file: "dist/index.js",
+		file: "dist/index.cjs",
 		format: "cjs",
 	}),
 ]
