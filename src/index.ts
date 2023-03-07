@@ -5,4 +5,4 @@
  */
 
 export { corejsPlugin } from "./plugin"
-export type { CoreJSOptions } from "./plugin"
+export type { CoreJSPluginOptions } from "./plugin"

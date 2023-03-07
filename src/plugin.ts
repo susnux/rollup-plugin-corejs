@@ -10,16 +10,15 @@ import { Plugin } from "rollup"
 import builder from "core-js-builder"
 import MagicString from "magic-string"
 
-export interface CoreJSOptions {
-	/** Browserslist or core-js-compat format, if not set then browserslist config is tired to load */
-	targets?:
-		| string
-		| readonly string[]
-		| Record<string, string | readonly string[]>
+type CoreJSOptions = Parameters<typeof builder>[0]
+
+export interface CoreJSPluginOptions {
+	/** Browserslist or core-js-compat format, if not set then browserslist config is tried to load */
+	targets?: CoreJSOptions["targets"]
 	/** CoreJS modules to use, defaults to "core-js/es" */
-	modules?: string | readonly string[] | readonly RegExp[]
+	modules?: CoreJSOptions["modules"]
 	/** CoreJS modules to exclude */
-	exclude?: string | readonly string[] | readonly RegExp[]
+	exclude?: CoreJSOptions["exclude"]
 	/** Add comment with used modules within bundle */
 	summary?: {
 		size: boolean
@@ -28,9 +27,9 @@ export interface CoreJSOptions {
 }
 
 export function corejsPlugin(
-	options: CoreJSOptions = { modules: "core-js/es" }
+	options: CoreJSPluginOptions = { modules: "core-js/es" }
 ) {
-	const config = {
+	const config: CoreJSOptions = {
 		format: "esm",
 		modules: options.modules,
 		exclude: options.exclude,
