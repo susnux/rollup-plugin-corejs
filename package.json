@@ -31,7 +31,7 @@
     }
   },
   "scripts": {
-    "build": "rm -v dist/* && rollup -c rollup.config.js",
+    "build": "rm -fv dist/* && rollup -c rollup.config.js",
     "check-types": "tsc --noEmit",
     "format": "prettier --write src '*.{js,mjs,cjs}'",
     "lint": "prettier --check src '*.{js,mjs,cjs}'",
