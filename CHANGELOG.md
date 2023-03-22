@@ -14,7 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Fixed
 
-## [0.2.0]
+## [0.3.0] - 2023-03-22
+### Changed
+- Update dependencies
+
+### Fixed
+- Fix loading extended browserslist config when no targets are given
+
+## [0.2.0] - 2023-03-08
 ### Changed
 - Update dependencies
 - Update `core-js-builder` to 3.29.0 which now provides its own types
@@ -27,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release for rollup 3.x
 
-[unreleased]: https://github.com/susnux/rollup-plugin-corejs/compare/v0.2.0...HEAD
+[unreleased]: https://github.com/susnux/rollup-plugin-corejs/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/susnux/rollup-plugin-corejs/releases/tag/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/susnux/rollup-plugin-corejs/releases/tag/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/susnux/rollup-plugin-corejs/releases/tag/v0.1.0
