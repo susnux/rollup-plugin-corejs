@@ -33,10 +33,18 @@ export function corejsPlugin(
 		format: "esm",
 		modules: options.modules,
 		exclude: options.exclude,
-		targets: options.targets || browserslist.loadConfig({}),
+		targets:
+			options.targets ||
+			(browserslist.findConfig(".") || browserslist.loadConfig({})
+				? browserslist()
+				: undefined),
 		summary: {
 			comment: options.summary,
 		},
+	}
+
+	if (process.env.NODE_ENV === "development") {
+		console.debug("browser targets", config.targets)
 	}
 
 	return {
