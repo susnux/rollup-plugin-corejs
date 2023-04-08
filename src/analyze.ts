@@ -7,6 +7,10 @@
  *
  * @author Ferdinand Thiessen <rpm@fthiessen.de>
  * @license EUPL-1.2
+ *
+ * SPDX-FileCopyrightText: 2023 Ferdinand Thiessen <rpm@fthiessen.de>
+ * SPDX-License-Identifier: EUPL-1.2
+ *
  */
 
 import { traverse, Visitor, Visitors } from 'estree-toolkit'
