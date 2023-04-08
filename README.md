@@ -70,11 +70,8 @@ You can omit setting `targets` in this case browserslist is used (`package.json`
   exclude?: string | readonly string[] | readonly RegExp[],
   /** Overide browserslist targets */
   targets?: string | readonly string[] | Record<string, string | readonly string[]>
-  /** Add comment which modules are used within bundle */
-  summary?: {
-    size: boolean
-    modules: boolean
-  }
+  /** Only include polyfills for APIs used by your code (dependencies not included) */
+  usage?: boolean
 }
 ```
 

@@ -44,12 +44,14 @@
     "rollup": "^3.0"
   },
   "dependencies": {
+    "acorn": "^8.8.2",
     "browserslist": "^4.21.5",
-    "core-js-builder": "^3.29.1",
+    "core-js-compat": "^3.30.0",
+    "estree-toolkit": "^1.4.0",
     "magic-string": "^0.30.0"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.0.0",
+    "@rollup/plugin-typescript": "^11.1.0",
     "@types/jest": "^29.5.0",
     "jest": "^29.5.0",
     "prettier": "^2.8.6",

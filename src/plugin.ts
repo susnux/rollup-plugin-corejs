@@ -7,40 +7,27 @@
 import browserslist from "browserslist"
 import { Plugin } from "rollup"
 
-import builder from "core-js-builder"
+import compat from 'core-js-compat'
 import MagicString from "magic-string"
+import { filterModules } from "./analyze"
 
-type CoreJSOptions = Parameters<typeof builder>[0]
+type CoreJSOptions = Parameters<typeof compat.compat>[0]
 
-export interface CoreJSPluginOptions {
-	/** Browserslist or core-js-compat format, if not set then browserslist config is tried to load */
-	targets?: CoreJSOptions["targets"]
-	/** CoreJS modules to use, defaults to "core-js/es" */
-	modules?: CoreJSOptions["modules"]
-	/** CoreJS modules to exclude */
-	exclude?: CoreJSOptions["exclude"]
-	/** Add comment with used modules within bundle */
-	summary?: {
-		size: boolean
-		modules: boolean
-	}
-}
+export type CoreJSPluginOptions = Pick<CoreJSOptions, "targets" | "modules" | "exclude"> & {
+	/** Only include polyfills used by *your* code (dependencies are not checked) */
+	usage?: boolean
+};
 
 export function corejsPlugin(
 	options: CoreJSPluginOptions = { modules: "core-js/es" }
 ) {
-	const config: CoreJSOptions = {
-		format: "esm",
+	const config: CoreJSPluginOptions = {
 		modules: options.modules,
 		exclude: options.exclude,
-		targets:
-			options.targets ||
+		targets: options.targets ||
 			(browserslist.findConfig(".") || browserslist.loadConfig({})
 				? browserslist()
 				: undefined),
-		summary: {
-			comment: options.summary,
-		},
 	}
 
 	if (process.env.NODE_ENV === "development") {
@@ -49,26 +36,34 @@ export function corejsPlugin(
 
 	return {
 		name: "core-js",
-		async transform(code, id) {
-			/*
-			 * We do this in `transform` so the imports get grouped
-			 * into split chunk for multiple entries
-			 */
-			if (this.getModuleInfo(id)?.isEntry) {
-				const magicString = new MagicString(code)
-				const bundle = await builder(config)
+		transform: {
+			// run as the last plugin, required to work with the vue plugin
+			order: 'post',
+			async handler(code, id) {
+				const moduleInfo = this.getModuleInfo(id)
+				if (!moduleInfo.isExternal && !moduleInfo.id.includes('node_modules')) {
+					console.warn("got id: ", moduleInfo.id)
 
-				magicString.prepend(bundle)
+					let { list } = compat.compat({ targets: config.targets, modules: config.modules, exclude: config.exclude });
+					if (config.usage) {
+						const ast = this.parse(code)
+						list = filterModules(list, ast)
+					}
+					const polyfills = list.map(p => `import 'core-js/modules/${p}.js';`)
 
-				return {
-					code: magicString.toString(),
-					map: magicString.generateMap({ hires: true }),
+					const magicString = new MagicString(code)
+					magicString.prepend(polyfills.join('\n'))
+
+					return {
+						code: magicString.toString(),
+						map: magicString.generateMap({ hires: true }),
+					}
 				}
-			}
-			return {
-				code,
-				map: null,
-			}
+				return {
+					code,
+					map: null
+				}
+			},
 		},
 	} as Plugin
 }

@@ -89,42 +89,4 @@ describe("CoreJS rollup plugin", () => {
         expect(output).toHaveLength(1)
         expect(output[0].imports).not.toContain("core-js/modules/es.array.includes.js")
     })
-
-    it("includes size summary", async () => {
-        const bundle = await rollup({
-            input: path("fixtures/entry1.js"),
-            external: [/^core-js/],
-            plugins: [
-                corejsPlugin({
-                    summary: {
-                        modules: false,
-                        size: true,
-                    },
-                })
-            ],
-        })
-        const output = await getOutput(bundle)
-        expect(output).toHaveLength(1)
-        expect(/\* size: \d+\.\d+/.test(output[0].code)).toBe(true)
-        expect(/\* modules:\n/.test(output[0].code)).toBe(false)
-    })
-
-    it("includes modules summary", async () => {
-        const bundle = await rollup({
-            input: path("fixtures/entry1.js"),
-            external: [/^core-js/],
-            plugins: [
-                corejsPlugin({
-                    summary: {
-                        modules: true,
-                        size: false,
-                    },
-                })
-            ],
-        })
-        const output = await getOutput(bundle)
-        expect(output).toHaveLength(1)
-        expect(/\* size: \d+\.\d+/.test(output[0].code)).toBe(false)
-        expect(/\* modules:\n/.test(output[0].code)).toBe(true)
-    })
 })
