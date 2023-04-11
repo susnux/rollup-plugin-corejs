@@ -15,6 +15,19 @@
 
 import { traverse, Visitor, Visitors } from 'estree-toolkit'
 
+enum PolyfillType {
+    CallWithArguments,
+    StaticMember,
+    GenericMethod,
+    GenericProperty,
+    Global
+}
+
+const PT = PolyfillType
+type ModuleName = string
+type Arguments = any[]
+type ModuleEntry = [ModuleName, PolyfillType, string, ...Arguments]
+
 /**
  * Core-Js 3.x contains some alias which will be removed with version 4.
  * This maps those aliases to the correct modules
@@ -22,6 +35,9 @@ import { traverse, Visitor, Visitors } from 'estree-toolkit'
 const aliasModules = {
     'es.aggregate-error': [
         'es.aggregate-error.constructor'
+    ],
+    'es.data-view': [
+        'es.data-view.constructor'
     ],
     'es.map': [
         'es.map.constructor'
@@ -51,19 +67,8 @@ const aliasModules = {
         'es.weak-map.constructor'
     ]
 }
-enum PolyfillType {
-    StaticMember,
-    GenericMethod,
-    GenericProperty,
-    Global
-}
 
-const PT = PolyfillType
-type ModuleName = string
-type Arguments = string[]
-type ModuleEntry = [ModuleName, PolyfillType, ...Arguments]
-
-const detectableModules: ModuleEntry[] = [
+export const detectableModules: ModuleEntry[] = [
     ['es.aggregate-error.cause', PT.Global, 'AggregateError'],
     ['es.aggregate-error.constructor', PT.Global, 'AggregateError'],
     // array buffer
@@ -88,6 +93,9 @@ const detectableModules: ModuleEntry[] = [
     ['es.array.includes', PT.GenericMethod, 'includes'],
     ['es.array.index-of', PT.GenericMethod, 'indexOf'],
     ['es.array.is-array', PT.StaticMember, 'Array', 'isArray'],
+    ['es.array.iterator', PT.GenericMethod, 'entries'],
+    ['es.array.iterator', PT.GenericMethod, 'keys'],
+    ['es.array.iterator', PT.GenericMethod, 'values'],
     ['es.array.join', PT.GenericMethod, 'join'],
     ['es.array.last-index-of', PT.GenericMethod, 'lastIndexOf'],
     ['es.array.map', PT.GenericMethod, 'map'],
@@ -99,6 +107,7 @@ const detectableModules: ModuleEntry[] = [
     ['es.array.slice', PT.GenericMethod, 'slice'],
     ['es.array.some', PT.GenericMethod, 'some'],
     ['es.array.sort', PT.GenericMethod, 'sort'],
+    ['es.array.splice', PT.GenericMethod, 'splice'],
     ['es.array.to-reversed', PT.GenericMethod, 'toReversed'],
     ['es.array.to-sorted', PT.GenericMethod, 'toSorted'],
     ['es.array.to-spliced', PT.GenericMethod, 'toSpliced'],
@@ -107,6 +116,17 @@ const detectableModules: ModuleEntry[] = [
     ['es.array.species', PT.StaticMember, 'Symbol', 'species'],
     // TODO: es.array.unscopables.flat-map
     // TODO: es.array.unscopables.flat
+    // data-view
+    ['es.data-view.constructor', PT.Global, 'DataView'],
+    // error
+    // Not possible because toString might be called implicitly (template string):
+    // es.error.to-string
+    // function
+    ['es.function.bind', PT.GenericMethod, 'bind'],
+    ['es.function.has-instance', PT.StaticMember, 'Symbol', 'hasInstance'],
+    ['es.function.name', PT.GenericProperty, 'name'],
+    // globalThis
+    ['es.global-this', PT.Global, 'globalThis'],
     // json
     ['es.json.stringify', PT.StaticMember, 'JSON', 'stringify'],
     // map
@@ -126,12 +146,12 @@ const detectableModules: ModuleEntry[] = [
     ['es.promise.all', PT.StaticMember, 'Promise', 'all'],
     ['es.promise.all-settled', PT.StaticMember, 'Promise', 'allSettled'],
     ['es.promise.any', PT.StaticMember, 'Promise', 'any', 'es.promise.any'],
+    ['es.promise.catch', PT.GenericMethod, 'catch'],
     ['es.promise.constructor', PT.Global, 'Promise'],
     ['es.promise.race', PT.StaticMember, 'Promise', 'race'],
     ['es.promise.reject', PT.StaticMember, 'Promise', 'reject'],
     ['es.promise.resolve', PT.StaticMember, 'Promise', 'resolve'],
     ['es.promise.finally', PT.GenericMethod, 'finally'],
-    // TODO: 'es.promise.catch',
     // RegExp
     ['es.regexp.constructor', PT.Global, 'RegExp'],
     // TODO "es.regexp.dot-all"
@@ -184,6 +204,9 @@ const detectableModules: ModuleEntry[] = [
     ['es.typed-array.to-sorted', PT.GenericMethod, 'toSorted'],
     ['es.typed-array.to-string', PT.GenericMethod, 'toString'],
     ['es.typed-array.with', PT.GenericMethod, 'with'],
+    // un-/escape
+    ['es.escape', PT.Global, 'escape'],
+    ['es.unescape', PT.Global, 'unescape'],
     // Weak
     ['es.weak-map.constructor', PT.Global, 'WeakMap'],
     ['es.weak-set.constructor', PT.Global, 'WeakSet'],
@@ -222,6 +245,7 @@ const detectableModules: ModuleEntry[] = [
     'es.math.expm1',
     'es.math.fround',
     'es.math.hypot',
+    'es.math.imul',
     'es.math.log10',
     'es.math.log1p',
     'es.math.log2',
@@ -234,10 +258,28 @@ const detectableModules: ModuleEntry[] = [
 }))();
 
 /**
+ * Init detection of error
+ */
+(() => [
+    'Error',
+    'EvalError',
+    'RangeError',
+    'ReferenceError',
+    'SyntaxError',
+    'TypeError',
+    'URIError',
+    'CompileError',
+    'LinkError',
+    'RuntimeError'
+].forEach(error => {
+    detectableModules.push(['es.error.cause', PT.CallWithArguments, error, (args: Array<unknown>) => args.length === 2])
+}))();
+
+/**
  * Init detection of static Number functions
  */
 (() => [
-    ['es.number.is-epsilon', 'EPSILON'],
+    ['es.number.epsilon', 'EPSILON'],
     ['es.number.is-finite', 'isFinite'],
     ['es.number.is-integer', 'isInteger'],
     ['es.number.is-nan', 'isNaN'],
@@ -252,8 +294,8 @@ const detectableModules: ModuleEntry[] = [
     // TODO: es.number.to-precision
 
 ].forEach(([mod, fn]) => {
-    detectableModules.push([mod[0], PT.StaticMember, 'Number', mod[1]])
- }))();
+    detectableModules.push([mod, PT.StaticMember, 'Number', fn])
+}))();
 
 class Walker {
     _modules: string[] = []
@@ -261,6 +303,7 @@ class Walker {
     _methods = new Map<string, Array<string>>
     _members = new Map<string, readonly string[]>
     _properties = new Map<string, Array<string>>
+    _calls = new Map<string, Array<any>>
 
     registerModules(modules: ModuleEntry[], filterModules: string[]) {
         const usedModules: string[] = []
@@ -278,6 +321,9 @@ class Walker {
                         break
                     case PolyfillType.StaticMember:
                         this.registerMember(name, rest[0], rest[1])
+                        break
+                    case PolyfillType.CallWithArguments:
+                        this.registerCall(name, rest[0], rest[1])
                         break
                 }
                 usedModules.push(name)
@@ -308,6 +354,13 @@ class Walker {
         this._methods.get(method).push(module)
     }
 
+    registerCall(module: string, object: string, validator: (args: Array<unknown>) => boolean) {
+        if (!this._calls.has(object)) {
+            this._calls.set(object, [])
+        }
+        this._calls.get(object).push({ module, validator })
+    }
+
     getVisitors(): Visitors<any> {
         return {
             Program(path, state: Walker) {
@@ -316,6 +369,26 @@ class Walker {
                         state._modules.push(module)
                     }
                 })
+            },
+
+            CallExpression(path, state: Walker) {
+                if (path.node.callee.type === 'Identifier') {
+                    if (state._calls.has(path.node.callee.name)) {
+                        state._calls.get(path.node.callee.name).forEach(v => {
+                            if (v.validator(path.node.arguments)) state._modules.push(v.module)
+                        })
+                    }
+                }
+            },
+
+            NewExpression(path, state: Walker) {
+                if (path.node.callee.type === 'Identifier') {
+                    if (state._calls.has(path.node.callee.name)) {
+                        state._calls.get(path.node.callee.name).forEach(v => {
+                            if (v.validator(path.node.arguments)) state._modules.push(v.module)
+                        })
+                    }
+                }
             },
 
             MemberExpression(path, state: Walker) {
@@ -346,7 +419,7 @@ class Walker {
     }
 }
 
-export function filterModules(modules: string[], ast: any) {
+export function filterModules(modules: readonly string[], ast: any) {
     const realModules: string[] = []
     modules.forEach(m => {
         if (m in aliasModules) realModules.push(...aliasModules[m])
@@ -361,144 +434,3 @@ export function filterModules(modules: string[], ast: any) {
     }}), walker)
     return [...(new Set(walker._modules))]
 }
-
-/*
-"es.error.cause";
-"es.error.to-string";
-"es.aggregate-error";
-"es.aggregate-error.cause";
-"es.array.at";
-"es.array.concat";
-"es.array.copy-within";
-"es.array.fill";
-"es.array.filter";
-"es.array.find";
-"es.array.find-index";
-"es.array.find-last";
-"es.array.find-last-index";
-"es.array.flat";
-"es.array.flat-map";
-"es.array.from";
-"es.array.includes";
-"es.array.index-of";
-"es.array.iterator";
-"es.array.last-index-of";
-"es.array.map";
-"es.array.of";
-"es.array.push";
-"es.array.reduce";
-"es.array.reduce-right";
-"es.array.slice";
-"es.array.sort";
-"es.array.species";
-"es.array.splice";
-"es.array.to-reversed";
-"es.array.to-sorted";
-"es.array.to-spliced";
-"es.array.unscopables.flat";
-"es.array.unscopables.flat-map";
-"es.array.unshift";
-"es.array.with";
-"es.array-buffer.is-view";
-"es.array-buffer.slice";
-"es.date.to-primitive";
-"es.function.has-instance";
-"es.global-this";
-"eson.stringify";
-"eson.to-string-tag";
-"es.math.to-string-tag";
-"es.object.define-getter";
-"es.object.define-properties";
-"es.object.define-property";
-"es.object.define-setter";
-"es.object.entries";
-"es.object.freeze";
-"es.object.from-entries";
-"es.object.get-own-property-descriptor";
-"es.object.get-own-property-descriptors";
-"es.object.get-own-property-names";
-"es.object.get-prototype-of";
-"es.object.has-own";
-"es.object.is-extensible";
-"es.object.is-frozen";
-"es.object.is-sealed";
-"es.object.lookup-getter";
-"es.object.lookup-setter";
-"es.object.prevent-extensions";
-"es.object.seal";
-"es.object.set-prototype-of";
-"es.object.to-string";
-"es.reflect.apply";
-"es.reflect.construct";
-"es.reflect.define-property";
-"es.reflect.delete-property";
-"es.reflect.get";
-"es.reflect.get-own-property-descriptor";
-"es.reflect.get-prototype-of";
-"es.reflect.has";
-"es.reflect.is-extensible";
-"es.reflect.own-keys";
-"es.reflect.prevent-extensions";
-"es.reflect.set";
-"es.reflect.set-prototype-of";
-"es.reflect.to-string-tag";
-"es.string.at-alternative";
-"es.string.code-point-at";
-"es.string.ends-with";
-"es.string.from-code-point";
-"es.string.includes";
-"es.string.iterator";
-"es.string.match";
-"es.string.match-all";
-"es.string.pad-end";
-"es.string.pad-start";
-"es.string.raw";
-"es.string.repeat";
-"es.string.replace";
-"es.string.replace-all";
-"es.string.search";
-"es.string.split";
-"es.string.starts-with";
-"es.string.trim";
-"es.string.trim-end";
-"es.string.trim-start";
-"es.typed-array.float32-array";
-"es.typed-array.float64-array";
-"es.typed-array.int8-array";
-"es.typed-array.int16-array";
-"es.typed-array.int32-array";
-"es.typed-array.uint8-array";
-"es.typed-array.uint8-clamped-array";
-"es.typed-array.uint16-array";
-"es.typed-array.uint32-array";
-"es.typed-array.at";
-"es.typed-array.copy-within";
-"es.typed-array.every";
-"es.typed-array.fill";
-"es.typed-array.filter";
-"es.typed-array.find";
-"es.typed-array.find-index";
-"es.typed-array.find-last";
-"es.typed-array.find-last-index";
-"es.typed-array.for-each";
-"es.typed-array.from";
-"es.typed-array.includes";
-"es.typed-array.index-of";
-"es.typed-array.iterator";
-"es.typed-array.join";
-"es.typed-array.last-index-of";
-"es.typed-array.map";
-"es.typed-array.of";
-"es.typed-array.reduce";
-"es.typed-array.reduce-right";
-"es.typed-array.reverse";
-"es.typed-array.set";
-"es.typed-array.slice";
-"es.typed-array.some";
-"es.typed-array.sort";
-"es.typed-array.to-locale-string";
-"es.typed-array.to-reversed";
-"es.typed-array.to-sorted";
-"es.typed-array.to-string";
-"es.typed-array.with.js";
-*/

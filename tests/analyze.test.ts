@@ -32,7 +32,21 @@ test('filter one (un)used', () => {
         Math.sinh(0.1)
     `);
 
-
     expect(filterModules(['es.math.cosh'], ast).sort()).toEqual(['es.math.cosh'].sort())
-    expect(filterModules(['es.math.cosh'], ast0).sort()).toEqual([].sort())
+    expect(filterModules(['es.math.cosh'], ast0)).toEqual([])
+})
+
+test('Can detect errors with cause', () => {
+    const ast = parseModule(`
+        new RangeError('foo', { cause: e});
+    `)
+    const ast0 = parseModule('')
+
+    expect(filterModules(['es.error.cause'], ast0)).toEqual([])
+    expect(filterModules(['es.error.cause'], ast)).toEqual(['es.error.cause'])
+})
+// X-Fail as not implemented
+test.failing('Can detect all esnext modules', () => {
+    const ast = parseModule('')
+    expect(filterModules(compat.modules.filter(v => v.startsWith('esnext.')), ast)).toBe([])
 })
