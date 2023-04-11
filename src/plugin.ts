@@ -42,8 +42,6 @@ export function corejsPlugin(
 			async handler(code, id) {
 				const moduleInfo = this.getModuleInfo(id)
 				if (!moduleInfo.isExternal && !moduleInfo.id.includes('node_modules')) {
-					console.warn("got id: ", moduleInfo.id)
-
 					let { list } = compat.compat({ targets: config.targets, modules: config.modules, exclude: config.exclude });
 					if (config.usage) {
 						const ast = this.parse(code)
