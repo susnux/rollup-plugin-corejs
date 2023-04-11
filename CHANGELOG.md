@@ -11,7 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- New feature to add polyfills only for APIs that are used by your code.
+  This is similar to Babels `useBuiltIns: 'usage'`. Please not that only your code is analyzed and not your third party dependencies.
+- `usage` option added, set to true to enable detecting usage polyfills
+
 ### Changed
+- `summary` option was removed
+- Update dependencies
+
 ### Fixed
 
 ## [0.3.0] - 2023-03-22
