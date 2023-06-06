@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-corejs",
-  "version": "0.3.0",
+  "version": "1.0.0-beta.0",
   "description": "⚡ include core-js polyfills when bundling with rollup",
   "keywords": [
     "corejs",
