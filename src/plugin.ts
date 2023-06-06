@@ -13,9 +13,8 @@ import { filterModules } from "./analyze"
 
 type CoreJSOptions = Parameters<typeof compat.compat>[0]
 
-export type CoreJSPluginOptions = Pick<
-	CoreJSOptions,
-	"targets" | "modules" | "exclude"
+export type CoreJSPluginOptions = Partial<
+	Pick<CoreJSOptions, "targets" | "modules" | "exclude">
 > & {
 	/** Only include polyfills used by *your* code (dependencies are not checked) */
 	usage?: boolean
