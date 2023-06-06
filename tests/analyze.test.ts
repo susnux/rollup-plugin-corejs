@@ -47,6 +47,7 @@ test('Can detect errors with cause', () => {
     expect(filterModules(['es.error.cause'], ast)).toEqual(['es.error.cause'])
 })
 
+// X-Fail as es.string classes are currently missing
 test.failing('Can detect all ES modules', () => {
     const ast = parseModule('')
     expect(
