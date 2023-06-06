@@ -7,16 +7,19 @@
 import browserslist from "browserslist"
 import { Plugin } from "rollup"
 
-import compat from 'core-js-compat'
+import compat from "core-js-compat"
 import MagicString from "magic-string"
 import { filterModules } from "./analyze"
 
 type CoreJSOptions = Parameters<typeof compat.compat>[0]
 
-export type CoreJSPluginOptions = Pick<CoreJSOptions, "targets" | "modules" | "exclude"> & {
+export type CoreJSPluginOptions = Pick<
+	CoreJSOptions,
+	"targets" | "modules" | "exclude"
+> & {
 	/** Only include polyfills used by *your* code (dependencies are not checked) */
 	usage?: boolean
-};
+}
 
 export function corejsPlugin(
 	options: CoreJSPluginOptions = { modules: "core-js/es" }
@@ -24,7 +27,8 @@ export function corejsPlugin(
 	const config: CoreJSPluginOptions = {
 		modules: options.modules,
 		exclude: options.exclude,
-		targets: options.targets ||
+		targets:
+			options.targets ||
 			(browserslist.findConfig(".") || browserslist.loadConfig({})
 				? browserslist()
 				: undefined),
@@ -38,19 +42,28 @@ export function corejsPlugin(
 		name: "core-js",
 		transform: {
 			// run as the last plugin, required to work with the vue plugin
-			order: 'post',
+			order: "post",
 			async handler(code, id) {
 				const moduleInfo = this.getModuleInfo(id)
-				if (!moduleInfo.isExternal && !moduleInfo.id.includes('node_modules')) {
-					let { list } = compat.compat({ targets: config.targets, modules: config.modules, exclude: config.exclude });
+				if (
+					!moduleInfo.isExternal &&
+					!moduleInfo.id.includes("node_modules")
+				) {
+					let { list } = compat.compat({
+						targets: config.targets,
+						modules: config.modules,
+						exclude: config.exclude,
+					})
 					if (config.usage) {
 						const ast = this.parse(code)
 						list = filterModules(list, ast)
 					}
-					const polyfills = list.map(p => `import 'core-js/modules/${p}.js';`)
+					const polyfills = list.map(
+						(p) => `import 'core-js/modules/${p}.js';`
+					)
 
 					const magicString = new MagicString(code)
-					magicString.prepend(polyfills.join('\n'))
+					magicString.prepend(polyfills.join("\n"))
 
 					return {
 						code: magicString.toString(),
@@ -59,7 +72,7 @@ export function corejsPlugin(
 				}
 				return {
 					code,
-					map: null
+					map: null,
 				}
 			},
 		},
