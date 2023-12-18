@@ -21,7 +21,7 @@ export type CoreJSPluginOptions = Partial<
 }
 
 export function corejsPlugin(
-	options: CoreJSPluginOptions = { modules: "core-js/es" }
+	options: CoreJSPluginOptions = { modules: "core-js/es" },
 ) {
 	const config: CoreJSPluginOptions = {
 		modules: options.modules,
@@ -58,7 +58,7 @@ export function corejsPlugin(
 						list = filterModules(list, ast)
 					}
 					const polyfills = list.map(
-						(p) => `import 'core-js/modules/${p}.js';`
+						(p) => `import 'core-js/modules/${p}.js';`,
 					)
 
 					const magicString = new MagicString(code)

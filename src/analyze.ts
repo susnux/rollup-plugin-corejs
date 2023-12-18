@@ -228,7 +228,7 @@ export const detectableModules: ModuleEntry[] = [
 		detectableModules.push(
 			["es.typed-array.from", PT.StaticMember, name, "from"],
 			["es.typed-array.of", PT.StaticMember, name, "of"],
-			[module, PT.Global, name]
+			[module, PT.Global, name],
 		)
 	}))()
 /**
@@ -341,7 +341,7 @@ class Walker {
 			}
 		})
 		this._modules.push(
-			...filterModules.filter((m) => !usedModules.includes(m))
+			...filterModules.filter((m) => !usedModules.includes(m)),
 		)
 	}
 
@@ -370,7 +370,7 @@ class Walker {
 	registerCall(
 		module: string,
 		object: string,
-		validator: (args: Array<unknown>) => boolean
+		validator: (args: Array<unknown>) => boolean,
 	) {
 		if (!this._calls.has(object)) {
 			this._calls.set(object, [])
@@ -416,15 +416,15 @@ class Walker {
 						path.node.property.type === "Identifier"
 							? path.node.property.name
 							: path.node.property.type === "Literal" &&
-							  typeof path.node.property.value === "string"
-							? path.node.property.value
-							: undefined
+								  typeof path.node.property.value === "string"
+								? path.node.property.value
+								: undefined
 					if (!property) return
 
 					// Static members (e.g. `Object.assign`)
 					if (state._members.has(path.node.object.name)) {
 						const [prop, module] = state._members.get(
-							path.node.object.name
+							path.node.object.name,
 						)
 						if (property === prop) {
 							state._modules.push(module)
@@ -463,7 +463,7 @@ export function filterModules(modules: readonly string[], ast: any) {
 				scope: true,
 			},
 		}),
-		walker
+		walker,
 	)
 	return [...new Set(walker._modules)]
 }
