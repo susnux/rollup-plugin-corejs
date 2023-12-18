@@ -13,7 +13,7 @@
  *
  */
 
-import { traverse, Visitor, Visitors } from "estree-toolkit"
+import { traverse, Visitors } from "estree-toolkit"
 
 enum PolyfillType {
 	CallWithArguments,
