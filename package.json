@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-corejs",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0",
   "description": "⚡ include core-js polyfills when bundling with rollup",
   "keywords": [
     "corejs",
@@ -25,9 +25,9 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.es.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     }
   },
   "scripts": {
