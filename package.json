@@ -44,7 +44,7 @@
     "rollup": "^3 || ^4"
   },
   "dependencies": {
-    "acorn": "^8.11.2",
+    "acorn": "^8.11.3",
     "browserslist": "^4.23.0",
     "core-js-compat": "^3.37.0",
     "estree-toolkit": "^1.7.3",
