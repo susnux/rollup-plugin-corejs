@@ -11,7 +11,7 @@ import compat from "core-js-compat"
 import MagicString from "magic-string"
 import { filterModules } from "./analyze"
 
-type CoreJSOptions = Parameters<typeof compat.compat>[0]
+type CoreJSOptions = NonNullable<Parameters<typeof compat.compat>[0]>
 
 export type CoreJSPluginOptions = Partial<
 	Pick<CoreJSOptions, "targets" | "modules" | "exclude">
