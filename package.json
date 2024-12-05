@@ -47,7 +47,7 @@
     "acorn": "^8.11.3",
     "browserslist": "^4.23.0",
     "core-js-compat": "^3.37.0",
-    "estree-toolkit": "^1.7.3",
+    "estree-toolkit": "^1.7.8",
     "magic-string": "^0.30.10"
   },
   "devDependencies": {
