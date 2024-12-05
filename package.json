@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "acorn": "^8.11.3",
-    "browserslist": "^4.23.0",
+    "browserslist": "^4.24.2",
     "core-js-compat": "^3.37.0",
     "estree-toolkit": "^1.7.8",
     "magic-string": "^0.30.14"
