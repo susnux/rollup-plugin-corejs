@@ -1,0 +1,15 @@
+version = 1
+SPDX-PackageName = "webpack-plugin-corejs"
+SPDX-PackageSupplier = "Ferdinand Thiessen <opensource@fthiessen.de>"
+
+[[annotations]]
+path = ["package-lock.json", "package.json"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Ferdinand Thiessen <opensource@fthiessen.de>"
+SPDX-License-Identifier = "EUPL-1.2"
+
+[[annotations]]
+path = ["tsconfig.json", ".github/renovate.json"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Ferdinand Thiessen <opensource@fthiessen.de>"
+SPDX-License-Identifier = "CC0-1.0"
