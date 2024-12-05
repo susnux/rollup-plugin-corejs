@@ -5,7 +5,7 @@
 		"declaration": true,
 		"esModuleInterop": true,
 		"moduleResolution": "node",
-		// Node 16
+		// Node 20
 		"target": "ES2022",
 		"module": "ES2022"
 	},
