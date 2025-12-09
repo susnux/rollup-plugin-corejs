@@ -51,7 +51,7 @@
     "magic-string": "^0.30.19"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^12.1.4",
+    "@rollup/plugin-typescript": "^12.3.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.18.11",
     "core-js": "^3.46.0",
