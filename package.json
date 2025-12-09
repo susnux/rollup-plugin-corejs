@@ -48,7 +48,7 @@
     "browserslist": "^4.26.3",
     "core-js-compat": "^3.46.0",
     "estree-toolkit": "^1.7.8",
-    "magic-string": "^0.30.19"
+    "magic-string": "^0.30.21"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.3.0",
